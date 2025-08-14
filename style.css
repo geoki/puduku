@@ -1,0 +1,42 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    text-align: center;
+}
+
+d1 {
+    font-size: 75px;
+}
+
+hr {
+    width: 1000px;
+}
+
+#board {
+    /* 3x3 392x392, 9x9 980x980 */ 
+    width: 392px; 
+    height: 392px;
+    margin: auto;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.tile {
+    width: 96px;
+    height: 96px;
+    border: 1px solid gray;
+
+    font-size: 20px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.correct-tile {
+    background-color: limegreen;
+}
+
+.darken {
+    background-color: lightgray;
+    outline: 10px black;
+}
