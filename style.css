@@ -12,9 +12,9 @@ hr {
 }
 
 #board {
-    /* 3x3 392x392, 9x9 980x980 */ 
-    width: 392px; 
-    height: 392px;
+    /* 3x3 392x392, 6x6 686x686, 9x9 980x980 */ 
+    width: 686px; 
+    height: 686px;
     margin: auto;
     display: flex;
     flex-wrap: wrap;
@@ -57,4 +57,27 @@ hr {
     background: white;
     padding: 20px;
     border-radius: 10px;
+}
+
+.suggestions {
+    list-style: none;
+    margin-top: 5px;
+    padding: 0;
+    background: white;
+    border: 1px solid gray;
+    max-height: 450px;
+    overflow-y: auto;
+    display: none;
+    position: absolute;
+    width: 100%;
+    z-index: 1000;
+}
+
+.suggestions li {
+    padding: 8px;
+    cursor: pointer;
+}
+
+.suggestions li:hover {
+    background-color: lightgray;
 }
