@@ -6,9 +6,11 @@ let rowCategory = ["grass", "fire", "water"];
 let colCategory = ["fighting", "flying", "ghost"];
 */
 
-// 
+const modal = document.getElementById('inputModal');
+const input = document.getElementById('pokemonName');
+
 let rowCategory = [ 
-["type", "grass"],
+["type", "ice"],
 ["type", "fire"],
 ["type", "water"]
 ]
@@ -71,19 +73,6 @@ function setBoard() {
             }
         }
     }
-    /*
-    //load generations
-    for (let i=0; i<size; i++) {
-        if (colCategory[0][i] == "gen") {
-            genString = colCategory[c-1][1].replace("gen ", "");
-            genNumber = parseInt(genString);
-            getGeneration(genNumber);
-        }
-        else {
-            getGeneration(0)
-        }
-    }
-    */
 }
 
 function selectTile() {
@@ -159,30 +148,3 @@ function checkType(pokemon, type) {
     return result;
 }
 
-/*
-async function getGeneration(genNumber) {
-    if (genNumber == 0) {
-        generation.push("");
-        return;
-    }
-
-    let url = "https://pokeapi.co/api/v2/generation/" + genNumber;
-
-    let res = await fetch(url);
-    let gen = await res.json();
-    generation.push(gen);
-    return;
-}
-
-function checkGen(pokemon, c) {
-    console.log(generation[c-1]);
-    for (let i=0; i<generation.pokemon_species.length; i++) {
-        if (generation[c-1].pokemon_species[i].name.includes(pokemon.name)) {
-            console.log(generation.pokemon_species[i].name);
-            return true;
-        }
-    }
-    console.log("wrong gen");
-    return false;
-}
-*/
