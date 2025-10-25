@@ -1,6 +1,6 @@
+// global variables
 let tileSelected = null;
 let generation = [];
-
 
 /*
 let rowCategory = ["grass", "fire", "water"];
@@ -17,13 +17,12 @@ let rowCategory = [
 ]
 
 let colCategory = [
-["type", "bug"],
+["type", "monotype"],
 ["type", "ghost"],
 ["type", "rock"],
 ["type", "ice"],
 ["type", "psychic"],
 ["type", "electric"],
-
 ]
 
 // variable for size of game
@@ -34,12 +33,14 @@ let numRows = size + 1;
 let numCols = size + 1;
 
 let score = 0;
+let tries = 0;
 let goal = size * size;
 
 window.onload = function() {
     modal = document.getElementById("inputModal");
     input = document.getElementById("pokemonName");
     suggestions = document.getElementById("suggestions");
+    overlay = document.getElementById("overlay");
 
     loadPokemonList();
     setBoard();
@@ -76,8 +77,6 @@ function setBoard() {
                 tile.id = r.toString() + "-" + c.toString();
                 let img = new Image();
                 tile.appendChild(img);
-    
-                tile.id = r.toString() + "-" + c.toString();
                 tile.classList.add("tile");
                 
                 // opens modal on click
@@ -123,13 +122,16 @@ function openModal(tile) {
     }
 
     if (tileSelected && tileSelected !== tile) {
-        tileSelected.classList.remove('darken');
+        tileSelected.classList.remove("darken");
     }
 
     tileSelected = tile;
     tileSelected.classList.add("darken");
 
-    modal.style.display = "block";
+    getCategories();
+
+    modal.style.display = "flex";
+    overlay.style.display = "block";
     input.value = "";  
     input.focus(); 
 }
@@ -138,8 +140,10 @@ function closeModal() {
     if (tileSelected) {
         tileSelected.classList.remove("darken");
     }
+
     modal.style.display = "none";
-        tileSelected = null;
+    overlay.style.display = "none";
+    tileSelected = null;
 }
 
 async function fetchData() {
@@ -175,6 +179,8 @@ function checkAnswer(pokemon) {
         tileSelected = null;
         score += 1;
         console.log("correct answer! score: " + score);
+
+        closeModal();
     }
     else {
         modal.style.display = "none";
@@ -202,6 +208,9 @@ function checkValidRow(pokemon, r) {
 
 function checkType(pokemon, type) {
     let result = false;
+    if (type === "monotype" && pokemon.types.length === 1) {
+        return true;
+    }
     for (let i=0; i<pokemon.types.length; i++) {
         if (pokemon.types[i].type.name === type) {
             result = true;
@@ -211,20 +220,42 @@ function checkType(pokemon, type) {
 }
 
 async function loadPokemonList() {
-    const response = await fetch("https://pokeapi.co/api/v2/pokemon?limit=1200");
+    const response = await fetch("https://pokeapi.co/api/v2/pokemon?limit=1500");
     const data = await response.json();
-    allPokemon = data.results.map(p => p.name).filter(name =>
+    allPokemon = data.results
+    .map(p => p.name)
+    .filter(name =>
         !name.includes("-totem") &&
         !name.includes("-starter") && 
         !name.includes("-original") &&
         !name.includes("-partner") &&
-        !name.includes("-cosplay")
-    );
+        !name.includes("-cosplay") &&
+        !name.includes("-cap") &&
+        !name.includes("-meteor")
+    )
+    //.map(name => name.replace(/-/g," "));
 }
 
-window.addEventListener('click', (e) => {
-    if (e.target === modal) {
+function getCategories() {
+    let categoriesDiv = document.getElementById("categoriesLabel");
+    let coords = tileSelected.id.split("-");
+    let r = parseInt(coords[0]);
+    let c = parseInt(coords[1]);
+
+    categoriesDiv.innerText = rowCategory[r-1][1] + " | " + colCategory[c-1][1];
+}
+
+window.addEventListener("click", (e) => {
+    if (e.target === overlay || e.target === modal) {
         closeModal();
     }
 });
 
+window.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+        closeModal();
+    }
+    else if (e.key === "Enter" && modal.style.display === "flex") {
+        fetchData();
+    }
+});

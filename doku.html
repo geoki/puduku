@@ -11,12 +11,16 @@
     <d1>puduku</d1>
     <hr>
     <div id ="board"> </div>
-
+    <div id="overlay" class="overlay"></div>
     <div id="inputModal" class="modal">
         <div class="modal-content">
-            <input type="text" id="pokemonName">
-            <ul id="suggestions" class="suggestions"></ul>
-            <button onclick="fetchData()"> Enter </button>
+            <div id="categoriesLabel"> </div>
+            <div> 
+                <input type="text" id="pokemonName">
+                <button onclick="fetchData()"> Enter </button>
+                <ul id="suggestions" class="suggestions"></ul>
+            </div>
+            
         </div>
     </div>
 
