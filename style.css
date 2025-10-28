@@ -136,3 +136,18 @@ hr {
     background: rgba(0, 0, 0, 0.5);
     z-index: 999;
 }
+
+.game-complete {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 30px 50px;
+    border-radius: 15px;
+    text-align: center;
+    z-index: 1100;
+    animation: popup 0.3s ease-out;
+
+}

@@ -22,7 +22,7 @@ let colCategory = [
 ["type", "rock"],
 ["type", "ice"],
 ["type", "psychic"],
-["type", "electric"],
+["type", "dark"],
 ]
 
 // variable for size of game
@@ -33,14 +33,18 @@ let numRows = size + 1;
 let numCols = size + 1;
 
 let score = 0;
-let tries = 0;
+let mistakes = 0;
+
 let goal = size * size;
+//let goal = 1;
 
 window.onload = function() {
     modal = document.getElementById("inputModal");
     input = document.getElementById("pokemonName");
     suggestions = document.getElementById("suggestions");
     overlay = document.getElementById("overlay");
+    mistakesSpan = document.getElementById("mistakes");
+    scoreSpan = document.getElementById("score");
 
     loadPokemonList();
     setBoard();
@@ -147,19 +151,22 @@ function closeModal() {
 }
 
 async function fetchData() {
-    if (!tileSelected) {
-        console.log("no tile selected");
-        return;
-    }
-
-    pokemonName = document.getElementById("pokemonName").value.toLowerCase();
-    
-    let url = "https://pokeapi.co/api/v2/pokemon/" + pokemonName;
-
-    let res = await fetch(url);
-    let pokemon = await res.json();
-
-    checkAnswer(pokemon);
+    let pokemonName = document.getElementById("pokemonName").value.toLowerCase()
+    const url = "https://pokeapi.co/api/v2/pokemon/" + pokemonName;
+    try {
+        const res = await fetch(url);
+        if (!res.ok) {
+            console.log("Pokemon not found:", res.status);
+            // TODO: show user-facing message
+            closeModal();
+            return;
+        }
+        const pokemon = await res.json();
+        checkAnswer(pokemon);
+    } 
+     catch (err) {
+        console.error("Network or API error:", err);
+     }
 }
 
 function checkAnswer(pokemon) {
@@ -179,31 +186,42 @@ function checkAnswer(pokemon) {
         tileSelected = null;
         score += 1;
         console.log("correct answer! score: " + score);
-
-        closeModal();
     }
     else {
         modal.style.display = "none";
+        mistakes += 1;
         console.log("wrong answer");
     }
-    
+
+    closeModal();
     document.getElementById("pokemonName").value = "";
+
+    // logic for checking win condition
+    if (score === goal) {
+        console.log("game complete!");
+        document.querySelector(".game-complete").style.display = "block";
+        document.getElementById("mistakes").innerText = mistakes;
+        overlay.style.display = "block";
+    }
 }
 
 function checkValidCol(pokemon, c) {
     if (colCategory[c-1][0] == "type") {
         return checkType(pokemon, colCategory[c-1][1]);
     }
+    /*
     else if (colCategory[c-1][0] == "gen") {
         return checkGen(pokemon);
     }
-    //return false;
+    */
+    return false;
 }
 
 function checkValidRow(pokemon, r) {
     if (rowCategory[r-1][0] == "type") {
         return checkType(pokemon, rowCategory[r-1][1]);
     }
+    return false;
 }
 
 function checkType(pokemon, type) {
@@ -246,7 +264,7 @@ function getCategories() {
 }
 
 window.addEventListener("click", (e) => {
-    if (e.target === overlay || e.target === modal) {
+    if ((e.target === overlay && score < goal) || e.target === modal) {
         closeModal();
     }
 });
